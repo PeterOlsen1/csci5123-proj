@@ -161,7 +161,7 @@ def _precompute_representation(features, feature_embeddings, feature_biases):
 
 class LightFMWrapper(LightFM):
     def __init__(self, no_components, loss, learning_rate, max_sampled, random_state, user_alpha):
-        super().__init__(no_components=200, loss='warp', learning_rate=0.02, max_sampled=400, random_state=1, user_alpha=1e-05)
+        super().__init__(no_components=no_components, loss=loss, learning_rate=learning_rate, max_sampled=max_sampled, random_state=random_state, user_alpha=user_alpha)
 
     @staticmethod
     def _to_cython_dtype(mat):
@@ -191,39 +191,39 @@ class LightFMWrapper(LightFM):
         return item_features
     
     def batch_setup(self, item_chunks, item_features, user_features, n_process: int=1):
+        _batch_setup(model=self, item_chunks=item_chunks, item_features=item_features, user_features=user_features, n_process=n_process)
+        # global _item_repr, _user_repr
+        # global _item_repr_biases, _user_repr_biases
+        # global _pool
+        # global _item_chunks
 
-        global _item_repr, _user_repr
-        global _item_repr_biases, _user_repr_biases
-        global _pool
-        global _item_chunks
+        # self.n_process = n_process
 
-        self.n_process = n_process
+        # if item_features is None:
+        #     n_items = len(self.item_biases)
+        #     item_features = sp.identity(n_items, dtype=CYTHON_DTYPE, format='csr')
 
-        if item_features is None:
-            n_items = len(self.item_biases)
-            item_features = sp.identity(n_items, dtype=CYTHON_DTYPE, format='csr')
+        # if user_features is None:
+        #     n_users = len(self.user_biases)
+        #     user_features = sp.identity(n_users, dtype=CYTHON_DTYPE, format='csr')
 
-        if user_features is None:
-            n_users = len(self.user_biases)
-            user_features = sp.identity(n_users, dtype=CYTHON_DTYPE, format='csr')
+        # n_users = user_features.shape[0]
+        # user_features = self._construct_user_features(n_users, user_features)
+        # _user_repr, _user_repr_biases = _precompute_representation(
+        #     features=user_features,
+        #     feature_embeddings=self.user_embeddings,
+        #     feature_biases=self.user_biases,
+        # )
 
-        n_users = user_features.shape[0]
-        user_features = self._construct_user_features(n_users, user_features)
-        _user_repr, _user_repr_biases = _precompute_representation(
-            features=user_features,
-            feature_embeddings=self.user_embeddings,
-            feature_biases=self.user_biases,
-        )
-
-        n_items = item_features.shape[0]
-        item_features = self._construct_item_features(n_items, item_features)
-        _item_repr, _item_repr_biases = _precompute_representation(
-            features=item_features,
-            feature_embeddings=self.item_embeddings,
-            feature_biases=self.item_biases,
-        )
-        _item_repr = _item_repr.T
-        _item_chunks = item_chunks
+        # n_items = item_features.shape[0]
+        # item_features = self._construct_item_features(n_items, item_features)
+        # _item_repr, _item_repr_biases = _precompute_representation(
+        #     features=item_features,
+        #     feature_embeddings=self.item_embeddings,
+        #     feature_biases=self.item_biases,
+        # )
+        # _item_repr = _item_repr.T
+        # _item_chunks = item_chunks
         # _clean_pool()
         # # Pool creation should go last
         # if n_process > 1:

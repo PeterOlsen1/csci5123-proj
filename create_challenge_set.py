@@ -26,6 +26,7 @@ def create_challenge_set():
     write_data = []
     written_data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     for i, playlist in enumerate(data['playlists']):
+        playlist["pid"] = i
         if playlist['num_tracks'] > 100 and written_data[9] < 100:
             # title + random 100 tracks
             playlist['num_samples'] = 100
