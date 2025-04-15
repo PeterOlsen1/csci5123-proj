@@ -191,43 +191,13 @@ class LightFMWrapper(LightFM):
         return item_features
     
     def batch_setup(self, item_chunks, item_features, user_features, n_process: int=1):
+        self.n_process = n_process
         _batch_setup(model=self, item_chunks=item_chunks, item_features=item_features, user_features=user_features, n_process=n_process)
         # global _item_repr, _user_repr
         # global _item_repr_biases, _user_repr_biases
         # global _pool
         # global _item_chunks
 
-        # self.n_process = n_process
-
-        # if item_features is None:
-        #     n_items = len(self.item_biases)
-        #     item_features = sp.identity(n_items, dtype=CYTHON_DTYPE, format='csr')
-
-        # if user_features is None:
-        #     n_users = len(self.user_biases)
-        #     user_features = sp.identity(n_users, dtype=CYTHON_DTYPE, format='csr')
-
-        # n_users = user_features.shape[0]
-        # user_features = self._construct_user_features(n_users, user_features)
-        # _user_repr, _user_repr_biases = _precompute_representation(
-        #     features=user_features,
-        #     feature_embeddings=self.user_embeddings,
-        #     feature_biases=self.user_biases,
-        # )
-
-        # n_items = item_features.shape[0]
-        # item_features = self._construct_item_features(n_items, item_features)
-        # _item_repr, _item_repr_biases = _precompute_representation(
-        #     features=item_features,
-        #     feature_embeddings=self.item_embeddings,
-        #     feature_biases=self.item_biases,
-        # )
-        # _item_repr = _item_repr.T
-        # _item_chunks = item_chunks
-        # _clean_pool()
-        # # Pool creation should go last
-        # if n_process > 1:
-        #     _pool = mp.Pool(processes=n_process)
     
     def batch_predict(self, chunk_id, user_ids, top_k: int=50):
         # from lightfm.inference import _batch_predict_for_user, _check_setup, _pool, _item_chunks
@@ -243,20 +213,20 @@ class LightFMWrapper(LightFM):
         # _check_setup()
         btime = time.time()
 
-        if self.n_process == 1:
-            print('Start recommending: using single process')
-            # self.debug('Start recommending: using single process')
-            for user_id in user_ids:
-                rec_ids, scores = _batch_predict_for_user(user_id=user_id, top_k=top_k, chunk_id=chunk_id)
-                recommendations[user_id] = rec_ids, scores
-        else:
-            # self.debug('Start recommending: using multiprocessing')
-            print('Start recommending: using multiprocessing')
-            recs_list = _pool.starmap(
-                _batch_predict_for_user,
-                zip(user_ids, itertools.repeat(top_k), itertools.repeat(chunk_id)),
-            )
-            recommendations = dict(zip(user_ids, recs_list))
+        # if self.n_process == 1:
+        print('Start recommending: using single process')
+        # self.debug('Start recommending: using single process')
+        for user_id in user_ids:
+            rec_ids, scores = _batch_predict_for_user(user_id=user_id, top_k=top_k, chunk_id=chunk_id)
+            recommendations[user_id] = rec_ids, scores
+        # else:
+        #     # self.debug('Start recommending: using multiprocessing')
+        #     print('Start recommending: using multiprocessing')
+        #     recs_list = _pool.starmap(
+        #         _batch_predict_for_user,
+        #         zip(user_ids, itertools.repeat(top_k), itertools.repeat(chunk_id)),
+        #     )
+        #     recommendations = dict(zip(user_ids, recs_list))
 
         elapsed_sec = time.time() - btime
         elapsed_sec_by_user = elapsed_sec / len(user_ids)

@@ -1,5 +1,6 @@
 import json
 import random
+import copy
 
 def create_challenge_set():
     '''
@@ -20,13 +21,18 @@ def create_challenge_set():
     '''
     fp = open("challenge_set_data.json", "r")
     data = json.load(fp)
+    data_copy = copy.deepcopy(data)
     fp.close()
 
     fp = open("challenge_set.json", "w")
+    answers = open("challenge_set_answers.json", "w")
     write_data = []
+    answer_data = []
     written_data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     for i, playlist in enumerate(data['playlists']):
         playlist["pid"] = i
+        answer = copy.deepcopy(playlist)
+
         if playlist['num_tracks'] > 100 and written_data[9] < 100:
             # title + random 100 tracks
             playlist['num_samples'] = 100
@@ -34,14 +40,12 @@ def create_challenge_set():
             playlist['tracks'] = new_tracks
             playlist['num_holdouts'] = playlist['num_tracks'] - 100
 
-            write_data.append(playlist)
             written_data[9] += 1
         elif playlist['num_tracks'] > 100 and written_data[8] < 100:
             # title + first 100 tracks
             playlist['tracks'] = playlist['tracks'][:100]
             playlist['num_holdouts'] = playlist['num_tracks'] - 100
             playlist['num_samples'] = 0
-            write_data.append(playlist)
             written_data[8] += 1
         elif playlist['num_tracks'] > 25 and written_data[7] < 100:
             # title + random 25 tracks
@@ -50,14 +54,12 @@ def create_challenge_set():
             playlist['tracks'] = new_tracks
             playlist['num_holdouts'] = playlist['num_tracks'] - 25
 
-            write_data.append(playlist)
             written_data[7] += 1
         elif playlist['num_tracks'] > 25 and written_data[6] < 100:
             # title + first 25 tracks
             playlist['tracks'] = playlist['tracks'][:25]
             playlist['num_holdouts'] = playlist['num_tracks'] - 25
             playlist['num_samples'] = 0
-            write_data.append(playlist)
             written_data[6] += 1
         elif playlist['num_tracks'] > 10 and written_data[5] < 100:
             # no title + first 10 tracks
@@ -65,14 +67,12 @@ def create_challenge_set():
             playlist['tracks'] = playlist['tracks'][:10]
             playlist['num_holdouts'] = playlist['num_tracks'] - 10
             playlist['num_samples'] = 0
-            write_data.append(playlist)
             written_data[5] += 1
         elif playlist['num_tracks'] > 10 and written_data[4] < 100:
             # title + first 10 tracks
             playlist['tracks'] = playlist['tracks'][:10]
             playlist['num_holdouts'] = playlist['num_tracks'] - 10
             playlist['num_samples'] = 10
-            write_data.append(playlist)
             written_data[4] += 1
         elif playlist['num_tracks'] > 5 and written_data[3] < 100:
             # no title + first 5 tracks
@@ -80,32 +80,46 @@ def create_challenge_set():
             playlist['tracks'] = playlist['tracks'][:5]
             playlist['num_holdouts'] = playlist['num_tracks'] - 5
             playlist['num_samples'] = 5
-            write_data.append(playlist)
             written_data[3] += 1
         elif playlist['num_tracks'] > 5 and written_data[2] < 100:
             # title + first 5 tracks
             playlist['tracks'] = playlist['tracks'][:5]
             playlist['num_holdouts'] = playlist['num_tracks'] - 5
             playlist['num_samples'] = 5
-            write_data.append(playlist)
             written_data[2] += 1
         elif playlist['num_tracks'] > 1 and written_data[1] < 100:
             # title + first track
             playlist['tracks'] = [playlist['tracks'][0]]
             playlist['num_holdouts'] = playlist['num_tracks'] - 1
             playlist['num_samples'] = 1
-            write_data.append(playlist)
             written_data[1] += 1
         else:
             # title only
             playlist['tracks'] = []
             playlist['num_holdouts'] = playlist['num_tracks']
             playlist['num_samples'] = 0
-            write_data.append(playlist)
 
+        # for answer, "num_holdouts" will be the length of the "tracks" list
+        answer['num_holdouts'] = playlist['num_holdouts']
+        answer['num_samples'] = playlist['num_samples']
+
+        # answer will contain all tracks not within the challenge set, but in the original data
+        answer['tracks'] = [track for track in answer['tracks'] if track not in playlist['tracks']]
+
+        # append the data
+        write_data.append(playlist)
+        answer_data.append(answer)
+
+    # replace data on the original object with new data
     data['playlists'] = write_data
+    data_copy['playlists'] = answer_data
+
+    # dump into the new files
     json.dump(data, fp, indent=4)
+    json.dump(data_copy, answers, indent=4)
     fp.close()
+    answers.close()
 
 
-create_challenge_set()
+if __name__ == "__main__":
+    create_challenge_set()
