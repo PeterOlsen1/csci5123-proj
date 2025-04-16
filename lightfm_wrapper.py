@@ -213,20 +213,20 @@ class LightFMWrapper(LightFM):
         # _check_setup()
         btime = time.time()
 
-        # if self.n_process == 1:
-        print('Start recommending: using single process')
-        # self.debug('Start recommending: using single process')
-        for user_id in user_ids:
-            rec_ids, scores = _batch_predict_for_user(user_id=user_id, top_k=top_k, chunk_id=chunk_id)
-            recommendations[user_id] = rec_ids, scores
-        # else:
-        #     # self.debug('Start recommending: using multiprocessing')
-        #     print('Start recommending: using multiprocessing')
-        #     recs_list = _pool.starmap(
-        #         _batch_predict_for_user,
-        #         zip(user_ids, itertools.repeat(top_k), itertools.repeat(chunk_id)),
-        #     )
-        #     recommendations = dict(zip(user_ids, recs_list))
+        if self.n_process == 1:
+            print('Start recommending: using single process')
+            # self.debug('Start recommending: using single process')
+            for user_id in user_ids:
+                rec_ids, scores = _batch_predict_for_user(user_id=user_id, top_k=top_k, chunk_id=chunk_id)
+                recommendations[user_id] = rec_ids, scores
+        else:
+            # self.debug('Start recommending: using multiprocessing')
+            print('Start recommending: using multiprocessing')
+            recs_list = _pool.starmap(
+                _batch_predict_for_user,
+                zip(user_ids, itertools.repeat(top_k), itertools.repeat(chunk_id)),
+            )
+            recommendations = dict(zip(user_ids, recs_list))
 
         elapsed_sec = time.time() - btime
         elapsed_sec_by_user = elapsed_sec / len(user_ids)
