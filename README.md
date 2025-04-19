@@ -13,3 +13,11 @@ The order of execution:
 6) lightfm_features.ipynb
 7) co_occurence_features.ipynb
 8) xgboost.ipynb
+
+our files:
+9) interpret_results.ipynb
+
+
+# TODO:
+* keep track of which playlists randomly selected 100 vs first 100
+  * this will be done in create_challenge_set.py and interpret_results.py
