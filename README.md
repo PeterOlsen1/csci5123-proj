@@ -21,3 +21,6 @@ our files:
 # TODO:
 * keep track of which playlists randomly selected 100 vs first 100
   * this will be done in create_challenge_set.py and interpret_results.py
+* more tuning of item item
+* decide how to add item-item songs to the submission
+* write paper
