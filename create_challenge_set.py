@@ -46,7 +46,7 @@ def create_challenge_set():
             # title + first 100 tracks
             playlist['tracks'] = playlist['tracks'][:100]
             playlist['num_holdouts'] = playlist['num_tracks'] - 100
-            playlist['num_samples'] = 0
+            playlist['num_samples'] = 100
             written_data[8] += 1
             random_flag = False
 
@@ -62,7 +62,7 @@ def create_challenge_set():
             # title + first 25 tracks
             playlist['tracks'] = playlist['tracks'][:25]
             playlist['num_holdouts'] = playlist['num_tracks'] - 25
-            playlist['num_samples'] = 0
+            playlist['num_samples'] = 25
             written_data[6] += 1
             random_flag = False
 
@@ -71,7 +71,7 @@ def create_challenge_set():
             playlist['name'] = ""
             playlist['tracks'] = playlist['tracks'][:10]
             playlist['num_holdouts'] = playlist['num_tracks'] - 10
-            playlist['num_samples'] = 0
+            playlist['num_samples'] = 10
             written_data[5] += 1
             random_flag = False
 
