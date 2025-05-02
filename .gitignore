@@ -4,7 +4,11 @@
 challenge_set.json
 challenge_set_data.json
 challenge_set_answers.json
-baseline_submission.hdf
+frequency_submission.hdf
 submission.hdf
 item_item_submission.hdf
 results.txt
+
+*.png
+
+__pycache__

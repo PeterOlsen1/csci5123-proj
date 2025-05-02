@@ -33,8 +33,8 @@ Once this is completed, a "submission.hdf" file will be present with the predict
 
 ## our additions
 In addition to the 8 files above, we have 3 more python notebook files that are to be run
-1) baseline.ipynb
+1) frequency.ipynb
 2) item_item.ipynb
 3) interpret_results.ipynb
 
-The results of this are displayed at the end of the interpret_results.ipynb file, where the original, baseline, and item item predictions are measured with a handful of different metrics
+The results of this are displayed at the end of the interpret_results.ipynb file, where the original, frequency, and item item predictions are measured with a handful of different metrics

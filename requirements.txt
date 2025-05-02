@@ -16,5 +16,6 @@ xgboost==2.0.3
 lightfm==1.17
 tables==3.10.1
 tqdm==4.67.1
+matplotlib==3.10.1
 
 # python is version 3.10.12
