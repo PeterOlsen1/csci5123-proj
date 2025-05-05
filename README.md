@@ -1,7 +1,3 @@
-# TODO:
-* run pipeline again
-* write paper
-
 # Overview
 
 This repository contains the original recommender pipeline from our <a href="https://dl-acm-org.ezp3.lib.umn.edu/doi/pdf/10.1145/3267471.3267488">paper</a> in addition to our enhancements. The original repository can be found 
